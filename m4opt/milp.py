@@ -185,6 +185,13 @@ class Model(_Model):
             atmost_1d(binary_vars), atmost_1d(cts), atmost_1d(true_values), names
         )
 
+    def add_sos1(self, vars):
+        """Add an SOS1 (Special Ordered Set type 1) constraint.
+
+        At most one variable in the set can be nonzero.
+        """
+        super().add_sos1(atmost_1d(vars))
+
     def add_indicator_constraints(self, indcts):
         return super().add_indicator_constraints(atmost_1d(indcts))
 
