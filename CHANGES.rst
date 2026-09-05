@@ -18,6 +18,10 @@ Changes
   your choice with ``pip install "m4opt[cplex]"`` or ``pip install
   "m4opt[gurobi]"``.
 
+- Fix the ZTF sky grid, whose right ascensions were truncated by a fixed-width
+  table reader so that all 1778 fields fell within 10 degrees of R.A. 0. ZTF
+  schedules were empty as a result.
+
 - Use ULTRASAT's tabulated throughput curve rather than a Gaussian
   approximation, which had a red leak some four orders of magnitude too
   large and nearly doubled the predicted zodiacal background.
