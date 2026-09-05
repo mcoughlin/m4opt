@@ -5,6 +5,10 @@ Changes
 2.12.1 (unreleased)
 ===================
 
+- Record ``has_observable_fields`` and ``has_solution`` in the schedule
+  metadata. An empty schedule previously gave no way to tell a sky that was
+  never observable from a solve that ran out of time.
+
 - Use ULTRASAT's tabulated throughput curve rather than a Gaussian
   approximation, which had a red leak some four orders of magnitude too
   large and nearly doubled the predicted zodiacal background.
