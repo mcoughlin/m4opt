@@ -2,6 +2,7 @@
 
 Supported backends:
 - ``gurobi``: Uses `gurobipy <https://pypi.org/project/gurobipy/>`_.
+- ``scip``: Uses `PySCIPOpt <https://pypi.org/project/PySCIPOpt/>`_.
 - ``cplex``: Uses `cplex <https://pypi.org/project/cplex/>`_ and
   `docplex <https://pypi.org/project/docplex/>`_.
 
@@ -42,8 +43,10 @@ def set_backend(name: str):
         One of ``'gurobi'`` or ``'cplex'``.
     """
     global _backend
-    if name not in ("gurobi", "cplex"):
-        raise ValueError(f"Unknown backend: {name!r}. Choose 'gurobi' or 'cplex'.")
+    if name not in ("gurobi", "cplex", "scip"):
+        raise ValueError(
+            f"Unknown backend: {name!r}. Choose 'cplex', 'gurobi' or 'scip'."
+        )
     _backend = name
 
 
@@ -66,10 +69,17 @@ def _get_backend():
         return "gurobi"
     except ImportError:
         pass
+    try:
+        import pyscipopt  # noqa: F401
+
+        return "scip"
+    except ImportError:
+        pass
     raise ImportError(
-        "No MILP solver found. Install gurobipy or cplex.\n"
-        "  pip install gurobipy   # for Gurobi\n"
-        "  pip install cplex docplex   # for CPLEX"
+        "No MILP solver found. Install cplex, gurobipy, or PySCIPOpt.\n"
+        "  pip install cplex docplex   # for CPLEX\n"
+        "  pip install gurobipy        # for Gurobi\n"
+        "  pip install PySCIPOpt       # for SCIP"
     )
 
 
@@ -96,6 +106,10 @@ def Model(**kwargs):
         from ._cplex import CplexModel
 
         return CplexModel(**kwargs)
+    elif backend == "scip":
+        from ._scip import SCIPModel
+
+        return SCIPModel(**kwargs)
     else:
         raise ValueError(f"Unknown backend: {backend!r}")
 
@@ -115,5 +129,9 @@ def SolveSolution(*args, **kwargs):
         from ._cplex import CplexSolveSolution
 
         return CplexSolveSolution(*args, **kwargs)
+    elif backend == "scip":
+        from ._scip import SCIPSolveSolution
+
+        return SCIPSolveSolution(*args, **kwargs)
     else:
         raise ValueError(f"Unknown backend: {backend!r}")

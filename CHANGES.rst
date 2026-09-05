@@ -5,6 +5,12 @@ Changes
 2.12.1 (unreleased)
 ===================
 
+- Add SCIP as a MILP solver backend, selected automatically if neither CPLEX
+  nor Gurobi is installed, or explicitly with ``M4OPT_SOLVER=scip``. SCIP is
+  open source under the Apache 2.0 license, so it can be deployed where an
+  academic CPLEX or Gurobi license does not reach. Install it with ``pip
+  install "m4opt[scip]"``.
+
 - Add Gurobi as an alternative MILP solver backend. The solver is selected
   automatically from whichever of ``cplex`` or ``gurobipy`` is installed,
   preferring CPLEX, and can be chosen explicitly with the ``M4OPT_SOLVER``

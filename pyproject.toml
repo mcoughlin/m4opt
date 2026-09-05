@@ -52,6 +52,9 @@ cplex = [
 gurobi = [
     "gurobipy",
 ]
+scip = [
+    "PySCIPOpt",
+]
 
 [dependency-groups]
 test = [

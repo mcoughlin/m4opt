@@ -87,7 +87,12 @@ def test_add_var_array(m, add_vars):
     result = add_vars((6, 4), lb=np.full((6, 4), 0.5), ub=np.full((6, 4), 1))
     assert result.shape == (6, 4)
 
-    assert m.number_of_variables == 49
+    if backend == "scip":
+        # SCIP has no semi-continuous variable type, so m4opt emulates it with
+        # an extra binary per variable.
+        assert m.number_of_variables >= 49
+    else:
+        assert m.number_of_variables == 49
 
 
 @pytest.mark.xfail(reason="Does not yet pass")
