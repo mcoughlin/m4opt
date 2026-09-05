@@ -427,12 +427,23 @@ class SCIPModel:
         hi = max(b[1] for b in bounds)
         aux = self._new_aux_var(lb=lo, ub=hi)
         switches = []
-        for expr in exprs:
+        for expr, (expr_lo, expr_hi) in zip(exprs, bounds):
             self._scip.addCons(aux >= expr if upper else aux <= expr)
             switch = self._scip.addVar(vtype="B")
-            self._scip.addConsIndicator(
-                aux - expr <= 0 if upper else expr - aux <= 0, switch
-            )
+            # A big-M disjunction relaxes better than an indicator, which
+            # constrains nothing until its binary is fixed. M is the largest
+            # gap the operand ranges allow, so it stays tight.
+            big_m = (hi - expr_lo) if upper else (expr_hi - lo)
+            if big_m < _INFINITY:
+                self._scip.addCons(
+                    aux - expr <= big_m * (1 - switch)
+                    if upper
+                    else expr - aux <= big_m * (1 - switch)
+                )
+            else:
+                self._scip.addConsIndicator(
+                    aux - expr <= 0 if upper else expr - aux <= 0, switch
+                )
             switches.append(switch)
         self._scip.addCons(scip.quicksum(switches) == 1)
         return np.asarray(SCIPVarProxy(aux, self)).view(VariableArray)
