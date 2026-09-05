@@ -267,3 +267,12 @@ def test_variable_bounds(m):
     x = m.continuous_vars(3, lb=2, ub=7)
     assert [v.lb for v in x] == [2, 2, 2]
     assert [v.ub for v in x] == [7, 7, 7]
+
+
+# Semi-continuous and semi-integer variables are excluded: their lower bound is
+# a threshold rather than a bound, and the backends differ on its default.
+@pytest.mark.parametrize("vartype", ["continuous", "integer"])
+def test_default_variable_bounds(m, vartype):
+    """A variable created without bounds is non-negative, not free."""
+    x = getattr(m, f"{vartype}_vars")(3)
+    assert all(v.lb == 0 for v in x)

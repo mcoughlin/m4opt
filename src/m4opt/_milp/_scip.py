@@ -275,6 +275,10 @@ class SCIPModel:
         for i in range(size):
             lb_i = lb[i] if isinstance(lb, np.ndarray) else lb
             ub_i = ub[i] if isinstance(ub, np.ndarray) else ub
+            # SCIP reads a lower bound of None as negative infinity, while the
+            # other backends default a decision variable to zero.
+            if lb_i is None:
+                lb_i = 0.0
             if semi:
                 # SCIP has no semi-continuous variable type, so the "zero or
                 # within bounds" behaviour is built from an indicator binary.
@@ -295,10 +299,14 @@ class SCIPModel:
         return SCIPVarProxy(self._scip.addVar(vtype="B"), self)
 
     def continuous_var(self, name=None, lb=None, ub=None):
-        return SCIPVarProxy(self._scip.addVar(lb=lb, ub=ub), self)
+        return SCIPVarProxy(
+            self._scip.addVar(lb=0.0 if lb is None else lb, ub=ub), self
+        )
 
     def integer_var(self, name=None, lb=None, ub=None):
-        return SCIPVarProxy(self._scip.addVar(vtype="I", lb=lb, ub=ub), self)
+        return SCIPVarProxy(
+            self._scip.addVar(vtype="I", lb=0.0 if lb is None else lb, ub=ub), self
+        )
 
     def _abs_scalar(self, expr):
         """Return ``|expr|`` split into its positive and negative parts.
