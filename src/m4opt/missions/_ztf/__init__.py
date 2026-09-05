@@ -70,8 +70,10 @@ def _read_skygrid():
         delimiter=" ",
         comment="%",
     )
-    return SkyCoord(table["col2"], table["col3"], unit=u.deg)
+    return SkyCoord(table["col2"], table["col3"], unit=u.deg), np.asarray(table["col1"])
 
+
+_ZTF_SKYGRID, _ZTF_FIELD_IDS = _read_skygrid()
 
 ztf = Mission(
     name="ztf",
@@ -99,7 +101,8 @@ ztf = Mission(
         & DeclinationConstraint(-90 * u.deg, 87.5 * u.deg)
     ),
     observer_location=EarthFixedObserverLocation(EarthLocation.of_site("Palomar")),
-    skygrid=_read_skygrid(),
+    skygrid=_ZTF_SKYGRID,
+    field_ids=_ZTF_FIELD_IDS,
     # From Section 4.2:
     #
     # > The new servo motors ... drive the HA axis at 0.4°/s^2 acceleration and

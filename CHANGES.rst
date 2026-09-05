@@ -5,6 +5,12 @@ Changes
 2.12.1 (unreleased)
 ===================
 
+- Name the field that each observation points at. Schedules gain a
+  ``field_index`` column giving the row in the mission's sky grid, and a
+  ``field_id`` column giving the mission's own identifier for missions that
+  name their fields. ZTF's identifiers are read from its field list; they run
+  from 1 to 1897 with gaps, so they cannot be inferred from position.
+
 - Use ULTRASAT's tabulated throughput curve rather than a Gaussian
   approximation, which had a red leak some four orders of magnitude too
   large and nearly doubled the predicted zodiacal background.
