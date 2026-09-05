@@ -5,6 +5,10 @@ Changes
 2.12.1 (unreleased)
 ===================
 
+- Add ``--max-fields``, the number of most probable fields to consider. It
+  was fixed at 50, which silently truncated the problem for instruments whose
+  sky grid covers a localization with more fields than that.
+
 - Use ULTRASAT's tabulated throughput curve rather than a Gaussian
   approximation, which had a red leak some four orders of magnitude too
   large and nearly doubled the predicted zodiacal background.
